@@ -1,0 +1,12 @@
+---
+title: "Final project Draft1"
+author: "Sakaiza"
+date: "12/7/2020"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+
+
+```
