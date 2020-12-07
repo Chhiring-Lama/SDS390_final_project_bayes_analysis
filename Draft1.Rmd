@@ -5,7 +5,7 @@ date: "12/7/2020"
 output: pdf_document
 ---
 
-```{r, message= FALSE, results='hide'}
+```{r, message= FALSE, results='hide', warning=FALSE}
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
@@ -13,8 +13,8 @@ library(bayesplot)
 library(rstan)
 library(rstanarm)
 ```
-# Title
 
+# Title
 
 # Abstract
 
@@ -26,6 +26,10 @@ library(rstanarm)
 # Methods
 
 **Data collection**
+```{r}
+library(Lock5Data)
+data(GPAGender)
+```
 
 **Variable creation**
 
