@@ -12,9 +12,6 @@ library(ggplot2)
 library(bayesplot)
 library(rstan)
 library(rstanarm)
-library(Lock5Data)
-data()
-
 ```
 
 # Title
@@ -30,6 +27,10 @@ data()
 # Methods
 
 **Data collection**
+```{r}
+library(Lock5Data)
+data(GPAGender)
+```
 
 **Variable creation**
 
