@@ -16,7 +16,6 @@ library(rstanarm)
 
 # Title
 
-
 # Abstract
 
 
