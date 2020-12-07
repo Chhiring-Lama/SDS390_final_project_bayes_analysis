@@ -13,7 +13,6 @@ library(bayesplot)
 library(rstan)
 library(rstanarm)
 ```
-
 # Title
 
 
