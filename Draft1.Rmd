@@ -84,6 +84,12 @@ In order to get a range.
 
 ## Uncertainity
 
+In order to express uncertainty in the deicsion, we will work with a probability distribution representing our belief in the true value of $\theta$, p($\theta$)
+This is a distribution over $\theta$ conditionned on some observed data _x_. 
+
+#code
+
+```
 
 # Results
 
