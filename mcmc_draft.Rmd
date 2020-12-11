@@ -1,5 +1,5 @@
 ---
-title: "Mcmc_draft"
+title: "MNormal linear regression_draft"
 author: "Chhiring Lama, Sakaiza Rasolofomanana Rajery"
 date: "12/11/2020"
 output: pdf_document
@@ -19,6 +19,8 @@ library(rstanarm)
 ```
 # Predicting amount of exercising based on GPA
 
+
+
 ## Background
 
 ## Data set
@@ -28,6 +30,14 @@ data(GPAGender)
 ```
 
 ##Analysis
+
+**Hypothesis**
+
+Scenario of interest: Let $\pi$ represents the probability that students with GPA above 3.0 exercise less than 10 hours a week. 
+
+$H_0$ : $\pi$ >= 0.80
+$H_a$ : $\pi$ < 0.80
+
 
 **function fit**
 ```{r}
