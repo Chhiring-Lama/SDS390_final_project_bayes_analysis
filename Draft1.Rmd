@@ -14,9 +14,11 @@ library(rstan)
 library(rstanarm)
 ```
 
-# Title
+# Choosing high GPA students based on their SAT scores
 
 # Abstract
+
+
 
 
 # Background and significance
@@ -24,33 +26,70 @@ library(rstanarm)
 
 
 # Methods
+In order to figure out the SAT score that maximizes a student's GPA below are the steps: 
+Frame what the decision is
+Set up fitted model predicting GPA based on Exercise, SAT and GenderCode
+Establish a loss function that can maximize GPA values based on different SAT score values
+
 
 **Data collection**
+
+The data used in this project comes from the Lock5Data package in R. 
 ```{r}
 library(Lock5Data)
 data(GPAGender)
+
 ```
 
-**Variable creation**
+This data set contains 343 observations and 6 variables. 
+Exercise: (hours per week)
+SAT: out of 1600
+GPA: 0-4 scale
+Pulse: in beats per minute
+Piercings: number of body piercings
+GenderCode: 0 = female or 1 = male
 
-**Analytic method**
+**variables creation**
 
+A variable called success was added, this codes 1 if the student's GPA is above or equal to  3.0 and 0 if it is below 3.0
+
+```{r}
+decision_data <- GPAGender%>%
+  mutate(success = ifelse(GPA>=3.0,1,0))
+view(decision_data)
+
+```
 ## Framing the decision space
 
+Here, we are trying to decide the SAT score that will determine successful admission of a student. The decision space, which is all the possible SAT scores, is then discrete. Let's denote the decision space as _S_ which means [0, 1600], and the decision _s_ $\epsilon$ [0, 1600]. 
 
 
 
 ## The other information that helps us make a decision
-
-
+In Bayesian decision theory, an important is about choosing between all the different decision based on some information. 
+Let's call that information $\theta$. This represents the probability that a student with a certain SAT score would be successful. $\theta$ $\epsilon$ [0,1]
 
 ## The loss function
+This function will allow us to quantify how bad or good a given decision _s_ is given the information $\theta$. 
+How good or bad the decision of choosing a student with a given SAT score, given the probability that they would succeed. 
 
+L : $\theta$ x _s_ -> R
 
+The loss function ties together the decision space and the information space. 
+Since we want to:
+maximize the SAT score at that which students will be successful.
+minimize the SAT score at that which students will be successful.
+In order to get a range. 
 
 
 ## Uncertainity
 
+In order to express uncertainty in the deicsion, we will work with a probability distribution representing our belief in the true value of $\theta$, p($\theta$)
+This is a distribution over $\theta$ conditionned on some observed data _x_. 
+
+#code
+
+```
 
 # Results
 
