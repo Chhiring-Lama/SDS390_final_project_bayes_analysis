@@ -1,0 +1,44 @@
+---
+title: "Mcmc_draft"
+author: "Chhiring Lama, Sakaiza Rasolofomanana Rajery"
+date: "12/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(bayesplot)
+library(rstan)
+library(rstanarm)
+```
+# Predicting amount of exercising based on GPA
+
+## Background
+
+## Data set
+```{r}
+library(Lock5Data)
+data(GPAGender)
+```
+
+##Analysis
+
+**function fit**
+```{r}
+set.seed(563453)
+
+gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA + Pulse + GenderCode, data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
+``` 
+
+**diagnosis**
+```{R}
+mcmc_trace(gpa_model_sim, size = 0.1)
+
+```
+
