@@ -7,6 +7,7 @@ output: pdf_document
 
 ```{r, message= FALSE, results='hide', warning=FALSE}
 library(tidyverse)
+<<<<<<< HEAD
 library(dplyr)
 library(ggplot2)
 library(bayesplot)
@@ -98,3 +99,8 @@ This is a distribution over $\theta$ conditionned on some observed data _x_.
 
 
 # References
+=======
+library(bayesrules)
+library(bayesplot)
+```
+>>>>>>> 99c021dcc2ec45e91a6282dd03b62b694eb2ea1c
