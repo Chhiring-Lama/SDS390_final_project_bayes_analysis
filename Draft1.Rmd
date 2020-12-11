@@ -14,54 +14,6 @@ library(rstan)
 library(rstanarm)
 ```
 
-
-# Title
-
-# Abstract
-
-
-# Background and significance
-
-
-
-# Methods
-
-**Data collection**
-```{r}
-library(Lock5Data)
-data(GPAGender)
-```
-
-**Variable creation**
-
-**Analytic method**
-
-## Framing the decision space
-
-
-
-
-## The other information that helps us make a decision
-
-
-
-## The loss function
-
-
-
-
-## Uncertainity
-
-
-# Results
-
-
-# Discussion 
-
-
-# References
-
-=======
 # Choosing high GPA students based on their SAT scores
 
 # Abstract
@@ -146,3 +98,4 @@ This is a distribution over $\theta$ conditionned on some observed data _x_.
 
 
 # References
+
