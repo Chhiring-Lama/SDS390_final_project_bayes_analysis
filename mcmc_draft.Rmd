@@ -42,6 +42,11 @@ mcmc_trace(gpa_model_sim, size = 0.1)
 
 ```
 ```{r}
+mcmc_dens_overlay(gpa_model_sim)
 
+```
+
+```{r}
+gpa_model_sim <- summary(gpa_model_sim)
 
 ```
