@@ -33,7 +33,7 @@ data(GPAGender)
 ```{r}
 set.seed(563453)
 
-gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA + Pulse + GenderCode, data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
+gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA + Pulse , data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
 ``` 
 
 **diagnosis**
@@ -50,3 +50,13 @@ mcmc_dens_overlay(gpa_model_sim)
 gpa_model_sim <- summary(gpa_model_sim)
 
 ```
+
+**Posterior credible interval**
+```{R}
+posterior_interval(gpa_model_sim, prob = 0.90)
+mcmc_areas(gpa_model_sim,
+           pars = c("(Intercept)"),
+           prob = 0.90,
+           prob = 0.90)
+```
+
