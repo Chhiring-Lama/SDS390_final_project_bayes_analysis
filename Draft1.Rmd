@@ -98,3 +98,4 @@ This is a distribution over $\theta$ conditionned on some observed data _x_.
 
 
 # References
+
