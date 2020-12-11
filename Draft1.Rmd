@@ -5,8 +5,58 @@ date: "12/7/2020"
 output: pdf_document
 ---
 
-```{r}
+```{r, message= FALSE, results='hide', warning=FALSE}
 library(tidyverse)
-library(bayesrules)
+library(dplyr)
+library(ggplot2)
 library(bayesplot)
+library(rstan)
+library(rstanarm)
 ```
+
+# Title
+
+# Abstract
+
+
+# Background and significance
+
+
+
+# Methods
+
+**Data collection**
+```{r}
+library(Lock5Data)
+data(GPAGender)
+```
+
+**Variable creation**
+
+**Analytic method**
+
+## Framing the decision space
+
+
+
+
+## The other information that helps us make a decision
+
+
+
+## The loss function
+
+
+
+
+## Uncertainity
+
+
+# Results
+
+
+# Discussion 
+
+
+# References
+
