@@ -41,4 +41,7 @@ gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA + Pulse + GenderCode, data = GPAG
 mcmc_trace(gpa_model_sim, size = 0.1)
 
 ```
+```{r}
 
+
+```
