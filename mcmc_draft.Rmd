@@ -60,3 +60,15 @@ mcmc_areas(gpa_model_sim,
            prob = 0.90)
 ```
 
+
+**posterior prediction**
+
+```{r}
+set.seed(563453)
+r_prediction <- posterior_predict(
+  gpa_model_sim,
+  newdata = data.frame(GPA = 3.0)
+)
+
+mcmc_dens(r_prediction)
+```
