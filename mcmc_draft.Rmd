@@ -1,5 +1,5 @@
 ---
-title: "MNormal linear regression_draft"
+title: "Normal linear regression_draft"
 author: "Chhiring Lama, Sakaiza Rasolofomanana Rajery"
 date: "12/11/2020"
 output: pdf_document
@@ -17,7 +17,7 @@ library(bayesplot)
 library(rstan)
 library(rstanarm)
 ```
-# Predicting amount of exercising based on GPA
+# Explaining the association between exercising and academic performance
 
 
 
@@ -31,7 +31,28 @@ data(GPAGender)
 
 ##Analysis
 
+**Variables**
+In this model, we used the following variables:
+
+Exercise (hours): Response variable, which is continuous
+SAT (point) : Explanatory variable, which is continuous
+GPA ( point): Explanatory variable, which is continuous
+
+**Defining parameters**
+
+Assuming that there is a linear association between exercise and SAT and GPA. The expected amount of exercise (Y) in hour for a student _i_ as a function of GPA (X) and SAT(Z) for that student ca be written as:
+
+$Y_i$ = $\beta_0$ + $\beta_1$ * $X_i$ + $\beta_2$ *$Z_i$ + $\epsilon_i$ ~ N(0, $\sigma$)
+where:
+
+$\beta_0$ : The amount of exercise in hour when GPA and SAT score are both 0
+$\beta_1$ : When SAT is kept constant, $\beta_1$ is the increase in hours of of exercise for every point increase in the student's GPA
+$\beta_2$ : When GPA is kept constant, $\beta_2$ is the increase in hours of exercise for every point increase in the student's SAT
+$\epsilon_i$: is a measure of the variability of Y for students with similar GPA and SAT scores. 
+
 **Hypothesis**
+
+We hypothesized that there is a negative association between hours of exercise and GPA, SAT. 
 
 As GPA increases, the number of hours a student exercises decreases. Mathematically:
 $H_0$ : $\beta_1$ = 0
@@ -44,6 +65,9 @@ $H-a$ : $\beta_2$ < 0
 **Building the Regression Model**
 
 To identify the association between the number of hours exercised and GPA and SAT, a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. Pulse rate was added as an indicator to increase the accuracy of the model. 
+
+
+
 
 ```{r}
 set.seed(563453)
