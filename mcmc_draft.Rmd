@@ -1,0 +1,92 @@
+---
+title: "MNormal linear regression_draft"
+author: "Chhiring Lama, Sakaiza Rasolofomanana Rajery"
+date: "12/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(bayesplot)
+library(rstan)
+library(rstanarm)
+```
+# Predicting amount of exercising based on GPA
+
+
+
+## Background
+
+## Data set
+```{r}
+library(Lock5Data)
+data(GPAGender)
+```
+
+##Analysis
+
+**Hypothesis**
+
+As GPA increases, the number of hours a student exercises decreases. Mathematically:
+$H_0$ : $\beta_1$ = 0
+$H_a$ : $\beta_1$ < 0
+
+As SAT score increases, the number of hours a student exercise decreases. Mathematically:
+$H_0$ : $\beta_2$ = 0
+$H-a$ : $\beta_2$ < 0
+
+**Building the Regression Model**
+
+To identify the association between the number of hours exercised and GPA and SAT, a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. Pulse rate was added as an indicator to increase the accuracy of the model. 
+
+```{r}
+set.seed(563453)
+
+gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA + Pulse , data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
+``` 
+
+**diagnosis**
+```{R}
+mcmc_trace(gpa_model_sim, size = 0.1)
+
+```
+
+```{r}
+mcmc_dens_overlay(gpa_model_sim)
+
+```
+
+```{r}
+gpa_model_sim <- summary(gpa_model_sim)
+
+```
+
+**Posterior credible interval**
+```{R}
+posterior_interval(gpa_model_sim, prob = 0.90)
+mcmc_areas(gpa_model_sim,
+           pars = c("(Intercept)"),
+           prob = 0.90,
+           prob = 0.90)
+```
+
+
+**posterior prediction**
+
+```{r}
+set.seed(563453)
+r_prediction <- posterior_predict(
+  gpa_model_sim,
+  newdata = data.frame(GPA = 3.0)
+)
+
+mcmc_dens(r_prediction)
+```
+
+**One-  Test*
