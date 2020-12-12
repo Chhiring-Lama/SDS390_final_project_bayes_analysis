@@ -41,7 +41,10 @@ As SAT score increases, the number of hours a student exercise decreases. Mathem
 $H_0$ : $\beta_2$ = 0
 $H-a$ : $\beta_2$ < 0
 
-**function fit**
+**Building the Regression Model**
+
+To identify the association between the number of hours exercised and GPA and SAT, a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. Pulse rate was added as an indicator to increase the accuracy of the model. 
+
 ```{r}
 set.seed(563453)
 
