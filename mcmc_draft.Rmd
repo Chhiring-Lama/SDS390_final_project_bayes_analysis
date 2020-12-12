@@ -86,12 +86,17 @@ mcmc_dens_overlay(gpa_model_sim)
 
 ```
 
+## Interpreting the posterior
+**Posterior summary statistics**
 ```{r}
-gpa_model_sim <- summary(gpa_model_sim)
+gpa_model_summary <- summary(gpa_model_sim)
+head(as.data.frame(model_summary),-2)
 
 ```
 
+
 **Posterior credible interval**
+Note: Correct intercept into GPA and SAT
 ```{R}
 posterior_interval(gpa_model_sim, prob = 0.90)
 mcmc_areas(gpa_model_sim,
@@ -100,17 +105,70 @@ mcmc_areas(gpa_model_sim,
            prob = 0.90)
 ```
 
+## Hypothesis testing
 
-**posterior prediction**
+**Data frame creation**
+
+```{r}
+library(tidyverse)
+library(reshape2)
+gpa_model_df <- as.array(gpa_model_sim) %>%
+melt %>%
+pivot_wider(names_from = parameters, values_from = value)
+```
+
+**Posterior probability that $\beta_1$<0**
+```{r}
+gpa_model_df %>%
+  mutate(exceeds_0 = temp_feel > 0) %>%
+  tabyl(exceeds_0)
+```
+
+
+**posterior prediction when GPA = 3.5**
 
 ```{r}
 set.seed(563453)
 r_prediction <- posterior_predict(
   gpa_model_sim,
-  newdata = data.frame(GPA = 3.0)
+  newdata = data.frame(GPA = 3.5)
 )
-
-mcmc_dens(r_prediction)
+mcmc_dens(r_prediction) + 
+  labs(x = "predicted hours of exercise when GPA = 3.5")
 ```
 
-**One-  Test*
+**posterior prediction when GPA = 2.5**
+
+```{r}
+set.seed(563453)
+r2_prediction <- posterior_predict(
+  gpa_model_sim,
+  newdata = data.frame(GPA = 2.5)
+)
+mcmc_dens(r2_prediction) + 
+  labs(x = "predicted hours of exercise when GPA = 2.5")
+```
+
+**posterior prediction when SAT = 1500**
+
+```{r}
+set.seed(563453)
+r3_prediction <- posterior_predict(
+  gpa_model_sim,
+  newdata = data.frame(SAT = 1500)
+)
+mcmc_dens(r3_prediction) + 
+  labs(x = "predicted hours of exercise when SAT = 1500")
+```
+
+**posterior prediction when SAT = 1000**
+
+```{r}
+set.seed(563453)
+r4_prediction <- posterior_predict(
+  gpa_model_sim,
+  newdata = data.frame(SAT = 1000)
+)
+mcmc_dens(r4_prediction) + 
+  labs(x = "predicted hours of exercise when SAT = 1000")
+```
