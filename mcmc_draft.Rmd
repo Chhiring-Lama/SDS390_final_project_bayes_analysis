@@ -16,6 +16,7 @@ library(ggplot2)
 library(bayesplot)
 library(rstan)
 library(rstanarm)
+library(ggiraphExtra)
 ```
 # Explaining the association between exercising and academic performance
 
@@ -66,14 +67,27 @@ $H-a$ : $\beta_2$ < 0
 
 To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
 
-
-
-
-```{r}
+```{r, warning =FALSE, result = FALSE}
 set.seed(563453)
 
 gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA, data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
 ``` 
+
+```{r}
+summary(gpa_model_sim)
+```
+
+
+```{r}
+new_data <- GPAGender %>%
+  gather(key, score, -c(Exercise, Pulse, Piercings, GenderCode))
+  
+ggplot(new_data, aes(score, Exercise))+
+  geom_point()+
+  geom_smooth(method = "lm", se = FALSE)+
+  facet_wrap(~key,scales = "free_x" )
+```
+
 
 **diagnosis**
 
