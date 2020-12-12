@@ -33,11 +33,13 @@ data(GPAGender)
 
 **Hypothesis**
 
-Scenario of interest: Let $\pi$ represents the probability that students with GPA above 3.0 exercise less than 10 hours a week. 
+As GPA increases, the number of hours a student exercises decreases. Mathematically:
+$H_0$ : $\beta_1$ = 0
+$H_a$ : $\beta_1$ < 0
 
-$H_0$ : $\pi$ >= 0.80
-$H_a$ : $\pi$ < 0.80
-
+As SAT score increases, the number of hours a student exercise decreases. Mathematically:
+$H_0$ : $\beta_2$ = 0
+$H-a$ : $\beta_2$ < 0
 
 **function fit**
 ```{r}
@@ -51,6 +53,7 @@ gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA + Pulse , data = GPAGender, famil
 mcmc_trace(gpa_model_sim, size = 0.1)
 
 ```
+
 ```{r}
 mcmc_dens_overlay(gpa_model_sim)
 
@@ -82,3 +85,5 @@ r_prediction <- posterior_predict(
 
 mcmc_dens(r_prediction)
 ```
+
+**One-  Test*
