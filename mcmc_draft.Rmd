@@ -63,21 +63,7 @@ As SAT score increases, the number of hours a student exercise decreases. Mathem
 $H_0$ : $\beta_2$ = 0
 $H-a$ : $\beta_2$ < 0
 
-**Building the Regression Model**
-
-To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
-
-```{r, warning =FALSE, result = FALSE}
-set.seed(563453)
-
-gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA, data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
-``` 
-
-```{r}
-summary(gpa_model_sim)
-```
-
-
+**Visualization**
 ```{r}
 new_data <- GPAGender %>%
   gather(key, score, -c(Exercise, Pulse, Piercings, GenderCode))
@@ -89,7 +75,18 @@ ggplot(new_data, aes(score, Exercise))+
 ```
 
 
-**diagnosis**
+
+**Building the Regression Model**
+
+To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
+
+```{r, warning =FALSE, result = FALSE}
+set.seed(563453)
+
+gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA, data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
+``` 
+
+**diagnosis** (Chhiring)
 
 
 ```{R}
@@ -102,7 +99,7 @@ mcmc_dens_overlay(gpa_model_sim)
 
 ```
 
-## Interpreting the posterior
+## Interpreting the posterior (Sakaiza)
 **Posterior summary statistics**
 ```{r}
 gpa_model_summary <- summary(gpa_model_sim)
@@ -110,18 +107,21 @@ head(as.data.frame(model_summary),-2)
 
 ```
 
+#Discard SAT (Chhiring)
 
-**Posterior credible interval**
-Note: Correct intercept into GPA and SAT
+**Posterior credible interval** (Sakaiza)
+Note: Correct intercept into GPA 
 ```{R}
 posterior_interval(gpa_model_sim, prob = 0.90)
 mcmc_areas(gpa_model_sim,
-           pars = c("(Intercept)"),
+           pars = c("(GPA)"),
            prob = 0.90,
            prob = 0.90)
+
+
 ```
 
-## Hypothesis testing
+## Hypothesis testing (Chhiring)
 
 **Data frame creation**
 
@@ -140,7 +140,7 @@ gpa_model_df %>%
   tabyl(exceeds_0)
 ```
 
-
+##Prediction(Sakaiza)
 **posterior prediction when GPA = 3.5**
 
 ```{r}
@@ -165,26 +165,3 @@ mcmc_dens(r2_prediction) +
   labs(x = "predicted hours of exercise when GPA = 2.5")
 ```
 
-**posterior prediction when SAT = 1500**
-
-```{r}
-set.seed(563453)
-r3_prediction <- posterior_predict(
-  gpa_model_sim,
-  newdata = data.frame(SAT = 1500)
-)
-mcmc_dens(r3_prediction) + 
-  labs(x = "predicted hours of exercise when SAT = 1500")
-```
-
-**posterior prediction when SAT = 1000**
-
-```{r}
-set.seed(563453)
-r4_prediction <- posterior_predict(
-  gpa_model_sim,
-  newdata = data.frame(SAT = 1000)
-)
-mcmc_dens(r4_prediction) + 
-  labs(x = "predicted hours of exercise when SAT = 1000")
-```
