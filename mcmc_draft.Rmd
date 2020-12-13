@@ -18,6 +18,7 @@ library(rstan)
 library(rstanarm)
 library(ggiraphExtra)
 ```
+
 # Explaining the association between exercising and academic performance
 
 
@@ -44,22 +45,23 @@ GPA ( point): Explanatory variable, which is continuous
 Assuming that there is a linear association between exercise and SAT and GPA. The expected amount of exercise (Y) in hour for a student _i_ as a function of GPA (X) and SAT(Z) for that student ca be written as:
 
 $Y_i$ = $\beta_0$ + $\beta_1$ * $X_i$ + $\beta_2$ *$Z_i$ + $\epsilon_i$ ~ N(0, $\sigma$)
+
 where:
 
 $\beta_0$ : The amount of exercise in hour when GPA and SAT score are both 0
-$\beta_1$ : When SAT is kept constant, $\beta_1$ is the increase in hours of of exercise for every point increase in the student's GPA
-$\beta_2$ : When GPA is kept constant, $\beta_2$ is the increase in hours of exercise for every point increase in the student's SAT
+$\beta_1$ :  When GPA is kept constant, $\beta_2$ is the increase in hours of exercise for every point increase in the student's SAT
+$\beta_2$ : When SAT is kept constant, $\beta_1$ is the increase in hours of of exercise for every point increase in the student's GPA
 $\epsilon_i$: is a measure of the variability of Y for students with similar GPA and SAT scores. 
 
 **Hypothesis**
 
 We hypothesized that there is a negative association between hours of exercise and GPA, SAT. 
 
-As GPA increases, the number of hours a student exercises decreases. Mathematically:
+As SAT increases, the number of hours a student exercises decreases. Mathematically:
 $H_0$ : $\beta_1$ = 0
 $H_a$ : $\beta_1$ < 0
 
-As SAT score increases, the number of hours a student exercise decreases. Mathematically:
+As GPA score increases, the number of hours a student exercise decreases. Mathematically:
 $H_0$ : $\beta_2$ = 0
 $H-a$ : $\beta_2$ < 0
 
@@ -78,7 +80,9 @@ ggplot(new_data, aes(score, Exercise))+
 
 **Building the Regression Model**
 
-To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
+To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. 
+
+A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
 
 ```{r, warning =FALSE, result = FALSE}
 set.seed(563453)
@@ -103,7 +107,7 @@ mcmc_dens_overlay(gpa_model_sim)
 **Posterior summary statistics**
 ```{r}
 gpa_model_summary <- summary(gpa_model_sim)
-head(as.data.frame(model_summary),-2)
+head(as.data.frame(gpa_model_summary),-2)
 
 ```
 
@@ -114,10 +118,14 @@ Note: Correct intercept into GPA
 ```{R}
 posterior_interval(gpa_model_sim, prob = 0.90)
 mcmc_areas(gpa_model_sim,
-           pars = c("(GPA)"),
+           pars = c("SAT"),
            prob = 0.90,
-           prob = 0.90)
+           point_est="mean")
 
+mcmc_areas(gpa_model_sim,
+           pars = c("GPA"),
+           prob = 0.90,
+           point_est="mean")
 
 ```
 
@@ -126,42 +134,27 @@ mcmc_areas(gpa_model_sim,
 **Data frame creation**
 
 ```{r}
-library(tidyverse)
 library(reshape2)
 gpa_model_df <- as.array(gpa_model_sim) %>%
 melt %>%
 pivot_wider(names_from = parameters, values_from = value)
 ```
 
-**Posterior probability that $\beta_1$<0**
+**Posterior probability that $\beta_1$< 0**
 ```{r}
+library( janitor )
 gpa_model_df %>%
-  mutate(exceeds_0 = temp_feel > 0) %>%
+  mutate(exceeds_0 = SAT < 0) %>%
   tabyl(exceeds_0)
+
 ```
 
-##Prediction(Sakaiza)
-**posterior prediction when GPA = 3.5**
-
+**Posterior probability that $\beta_2$< 0**
 ```{r}
-set.seed(563453)
-r_prediction <- posterior_predict(
-  gpa_model_sim,
-  newdata = data.frame(GPA = 3.5)
-)
-mcmc_dens(r_prediction) + 
-  labs(x = "predicted hours of exercise when GPA = 3.5")
-```
 
-**posterior prediction when GPA = 2.5**
+gpa_model_df %>%
+  mutate(exceeds_0 = GPA < 0) %>%
+  tabyl(exceeds_0)
 
-```{r}
-set.seed(563453)
-r2_prediction <- posterior_predict(
-  gpa_model_sim,
-  newdata = data.frame(GPA = 2.5)
-)
-mcmc_dens(r2_prediction) + 
-  labs(x = "predicted hours of exercise when GPA = 2.5")
 ```
 
