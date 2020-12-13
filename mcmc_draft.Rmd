@@ -104,6 +104,7 @@ mcmc_dens_overlay(gpa_model_sim)
 ```
 
 ## Interpreting the posterior (Sakaiza)
+
 **Posterior summary statistics**
 ```{r}
 gpa_model_summary <- summary(gpa_model_sim)
@@ -111,12 +112,9 @@ head(as.data.frame(gpa_model_summary),-2)
 
 ```
 
-#Discard SAT (Chhiring)
+**Visual representation of Posterior credible interval**
 
-**Posterior credible interval** (Sakaiza)
-Note: Correct intercept into GPA 
 ```{R}
-posterior_interval(gpa_model_sim, prob = 0.90)
 mcmc_areas(gpa_model_sim,
            pars = c("SAT"),
            prob = 0.90,
@@ -128,6 +126,7 @@ mcmc_areas(gpa_model_sim,
            point_est="mean")
 
 ```
+
 
 ## Hypothesis testing (Chhiring)
 
