@@ -86,15 +86,9 @@ As GPA score increases, the number of hours a student exercise decreases. Mathem
 
 \textbf {$H_a$} : $\beta_2$ < 0 
 
-**Appropriate prior models**
+**Prior models**
 
-Since $\beta_0$ can only take positive values and $\beta_1$ and $\beta_2$ can take real number values, a normal-normal model will be used to specify our prior understanding of their plausible values. 
-
-Since the standard deviation $\sigma$ is always positive, an exponential model will be used to specify its prior. 
-
-Our prior models will be as follows: 
-
-\textbf {$\beta_0$} ~ N(8,3^2), \textbf {$\beta_1$} ~ N(-0.0125, 0.0005^2), \textbf {$\beta_2$} ~ N(-5,2^2) \textbf {$\sigma$} ~ Exp(2) 
+Vague prior from the rstan model was used, therefore there was none specified. 
 
 **Visualization**
 
