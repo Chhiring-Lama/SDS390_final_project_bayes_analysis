@@ -229,8 +229,8 @@ Among 40 000 simulations of the same relationship, 40% display a negative correl
 ```{r}
 
 gpa_model_df %>%
-  mutate(exceeds_1 = GPA < 0) %>%
-  tabyl(exceeds_1)
+  mutate(exceeds_0 = GPA < 0) %>%
+  tabyl(exceeds_0)
 
 ```
 
