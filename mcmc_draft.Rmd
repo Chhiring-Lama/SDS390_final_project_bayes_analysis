@@ -9,63 +9,105 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, warning= FALSE, message=FALSE}
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
 library(bayesplot)
 library(rstan)
 library(rstanarm)
-library(ggiraphExtra)
+library(reshape2)
+library( janitor )
 ```
 
-# Explaining the association between exercising and academic performance
 
 
+\centerline{\bfseries Explaining the association between exercising and academic performance}
 
 ## Background
+
+When students focus on academics so much they tend to forget about their physical well being and exercise less. This analysis is an attempt to unveil the relationship between the exercising habit of students and their academic performance Using a data set of 343 variables from the Lock5Data Package, we will rely on bayesian methods, highlighting the importance of balancing prior information with data in order to infer a posterior interpretation,to explain the relationship between these two factors.   
+
 
 ## Data set
 ```{r}
 library(Lock5Data)
 data(GPAGender)
+
 ```
 
-##Analysis
+## Analysis
+
 
 **Variables**
-In this model, we used the following variables:
+
+
+In this analysis, we used the following variables:
 
 Exercise (hours): Response variable, which is continuous
 SAT (point) : Explanatory variable, which is continuous
 GPA ( point): Explanatory variable, which is continuous
 
-**Defining parameters**
 
-Assuming that there is a linear association between exercise and SAT and GPA. The expected amount of exercise (Y) in hour for a student _i_ as a function of GPA (X) and SAT(Z) for that student ca be written as:
+**Defining the likelihood model and parameters**
 
-$Y_i$ = $\beta_0$ + $\beta_1$ * $X_i$ + $\beta_2$ *$Z_i$ + $\epsilon_i$ ~ N(0, $\sigma$)
+Assuming that there is a linear association between exercise and SAT and GPA. The expected amount of exercise (Y) in hour for a student _i_ as a function of GPA (X) and SAT(Z) for that student can be written as:
+
+
+
+\centerline {$Y_i = \beta_0 + \beta_1 * X_i + \beta_2 * Z_i + \epsilon_i ~ N(0, \sigma)$}
 
 where:
 
-$\beta_0$ : The amount of exercise in hour when GPA and SAT score are both 0
-$\beta_1$ :  When GPA is kept constant, $\beta_2$ is the increase in hours of exercise for every point increase in the student's SAT
-$\beta_2$ : When SAT is kept constant, $\beta_1$ is the increase in hours of of exercise for every point increase in the student's GPA
-$\epsilon_i$: is a measure of the variability of Y for students with similar GPA and SAT scores. 
+\textbf {$\beta_0$} : The amount of exercise in hour when GPA and SAT score are both 0
+
+
+\textbf {$\beta_1$} : The increase in hours of exercise for every point increase in the student's SAT, when GPA
+is kept constant.
+
+
+\textbf {$\beta_2$} : The increase in hours of of exercise for every point increase in the student's GPA, when SAT is kept constant
+
+
+\textbf {$\epsilon_i$} : is a measure of the variability of Y for students with similar GPA and SAT scores. 
+
 
 **Hypothesis**
 
 We hypothesized that there is a negative association between hours of exercise and GPA, SAT. 
 
 As SAT increases, the number of hours a student exercises decreases. Mathematically:
-$H_0$ : $\beta_1$ = 0
-$H_a$ : $\beta_1$ < 0
+
+\textbf {$H_0$} : $\beta_1$ = 0
+
+\textbf {$H_a$} : $\beta_1$ < 0 
 
 As GPA score increases, the number of hours a student exercise decreases. Mathematically:
-$H_0$ : $\beta_2$ = 0
-$H-a$ : $\beta_2$ < 0
+
+\textbf {$H_0$} : $\beta_2$ = 0 
+
+\textbf {$H_a$} : $\beta_2$ < 0 
+
+**Appropriate prior models**
+
+Since $\beta_0$ can only take positive values and $\beta_1$ and $\beta_2$ can take real number values, a normal-normal model will be used to specify our prior understanding of their plausible values. 
+
+Since the standard deviation $\sigma$ is always positive, an exponential model will be used to specify its prior. 
+
+Our prior models will be as follows: 
+
+$\beta_0$ ~ N(8,3^2)
+
+$\beta_1$ ~ N(-0.0125, 0.0005^2) 
+
+$\beta_2$ ~ N(-5,2^2) 
+
+$\sigma$ ~ Exp(2) 
+
 
 **Visualization**
+
+
 ```{r}
 new_data <- GPAGender %>%
   gather(key, score, -c(Exercise, Pulse, Piercings, GenderCode))
@@ -74,8 +116,8 @@ ggplot(new_data, aes(score, Exercise))+
   geom_point()+
   geom_smooth(method = "lm", se = FALSE)+
   facet_wrap(~key,scales = "free_x" )
-```
 
+```
 
 
 **Building the Regression Model**
@@ -84,13 +126,17 @@ To identify the association between the number of hours exercised and academic p
 
 A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
 
-```{r, warning =FALSE, result = FALSE}
+
+```{r, message= FALSE, results='hide'}
 set.seed(563453)
 
 gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA, data = GPAGender, family=  gaussian, chains = 4, iter = 10000*2)
+
 ``` 
 
-**diagnosis** (Chhiring)
+
+
+**diagnosis** (Chhiring) 
 
 
 ```{R}
@@ -106,23 +152,44 @@ mcmc_dens_overlay(gpa_model_sim)
 ## Interpreting the posterior (Sakaiza)
 
 **Posterior summary statistics**
+
+The posterior summary statistics provide us with the credible interval of each parameter.
+
 ```{r}
 gpa_model_summary <- summary(gpa_model_sim)
 head(as.data.frame(gpa_model_summary),-2)
 
+
 ```
+
+
+**For Intercept**: There is a 80% posterior probability that a student that has a GPA and a SAT score of 0 exercise between 11.04 and 19.5 hours per week. 
+
+
+**For SAT:** There is a 80% posterior probability that for each point increase in SAT, there is a change between -0.003 and 0	in hours of exercise per week for a student.
+
+
+**For GPA:** There is a 80% posterior probability that for each point increase in GPA, there is a decrease between 1.27 and 3.30 hours in the amount of exercising a student practices per week .
+
+These intervals are visualized by the shaded regions below: 
 
 **Visual representation of Posterior credible interval**
 
+
 ```{R}
 mcmc_areas(gpa_model_sim,
+           pars = c("(Intercept)"),
+           prob = 0.80,
+           point_est="mean")
+
+mcmc_areas(gpa_model_sim,
            pars = c("SAT"),
-           prob = 0.90,
+           prob = 0.80,
            point_est="mean")
 
 mcmc_areas(gpa_model_sim,
            pars = c("GPA"),
-           prob = 0.90,
+           prob = 0.80,
            point_est="mean")
 
 ```
@@ -130,30 +197,58 @@ mcmc_areas(gpa_model_sim,
 
 ## Hypothesis testing (Chhiring)
 
+Since the regression model we built provided us with 40000 alternative scenario for the trend in the relationship between Exercise, SAT and GPA.We can then compute the posterior probability that $\beta_1$ and $\beta_2$ are actually negative. 
+
 **Data frame creation**
 
 ```{r}
-library(reshape2)
 gpa_model_df <- as.array(gpa_model_sim) %>%
 melt %>%
 pivot_wider(names_from = parameters, values_from = value)
+
 ```
 
 **Posterior probability that $\beta_1$< 0**
+
+
 ```{r}
-library( janitor )
 gpa_model_df %>%
   mutate(exceeds_0 = SAT < 0) %>%
   tabyl(exceeds_0)
-
 ```
+Among 40 000 simulations of the same relationship, 40% display a negative correlation between SAT and exercising. 
+
 
 **Posterior probability that $\beta_2$< 0**
+
+
 ```{r}
 
 gpa_model_df %>%
-  mutate(exceeds_0 = GPA < 0) %>%
-  tabyl(exceeds_0)
+  mutate(exceeds_1 = GPA < 0) %>%
+  tabyl(exceeds_1)
 
 ```
+
+
+Among 40 000 simulations, 99% display a negative correlation between GPA and exercising when controlling for the other variable. 
+
+
+Because there is an 80% chance that $\beta_1$,the SAT coefficient, is between -0.003 and 0 and only 40% of the simulations demonstrate a negative correlation between these two variables, we fail to reject the null hypothesis that $\beta_1$ is equal to zero.  
+
+
+Because there is an 80% chance that $\beta_2$,the GPA coefficient is between  -3.30 and  -1.27 and 99% of the simulations demonstrate a negative correlation between these two variables, we fail to reject the null hypothesis that $\beta_2$ is equal to zero. 
+
+## Conclusion
+
+From the analysis above we can conclude that there is not enough posterior evidence that there is a negative association or even just an association between Exercising hours of students and their SAT score, however there is ample evidence that there is a negative association between GPA and exercising hours. Using bayesian methods we went from our prior understanding of the relationship between these variables, to a posterior analysis from 40 000 simulated scenarios, which also account for uncertainties in our posterior. This was made possible by using the data a data set of 343 variables. Through this analysis, we can see the power of rtsan in simulating massive information from a small dataset.  
+
+
+
+## References:
+
+“Simple Normal Regression.” Bayes Rules! An Introduction to Bayesian Modeling with R, by Alicia A Johnson et al., pp. 247–264. 
+
+
+
 
