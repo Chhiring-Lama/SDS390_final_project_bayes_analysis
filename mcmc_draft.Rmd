@@ -21,7 +21,6 @@ library( janitor )
 ```
 
 
-
 \centerline{\bfseries Explaining the association between exercising and academic performance}
 
 ## Background
@@ -118,7 +117,7 @@ ggplot(new_data, aes(score, Exercise))+
   facet_wrap(~key,scales = "free_x" )
 
 ```
-
+As shown in the figure above, in genereal, both GPA and SAT have negative linear correlation with exercise. That means that as the GPA and SAT scores increase, the predicted number of hours exercised per week is estimated to decrease. The decrease is steeper for GPA than SAT, so it can be assumed that the coefficient $\beta_1$ will be more negative than $\beta_2$. 
 
 **Building the Regression Model**
 
@@ -135,19 +134,25 @@ gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA, data = GPAGender, family=  gauss
 ``` 
 
 
+**diagnosis** 
 
-**diagnosis** (Chhiring) 
-
+Once the model was created, diagnostics needed to be run to make sure that the markov chains used for the regression model was big enough (with adequate iterations) and provided more accurate approximation of the posterior. To check if the MCMC simulations meets the criteria, two plots were graphed: MCMC trace plot and density plot overlaying the four chains. 
 
 ```{R}
 mcmc_trace(gpa_model_sim, size = 0.1)
 
 ```
 
+The major criteria for a good MCMC simulation according to the trace plot is that the plot resembles white noise without overall trends. Looking at the plot above, the graphs for all the coefficients ($\beta_0,\ \beta_1,\ \beta_2,\ \sigma$) meet the criteria. 
+
 ```{r}
 mcmc_dens_overlay(gpa_model_sim)
 
 ```
+
+The results from the denisty plot agree with the trace plots. For each coefficients, even though the points for the chains do not match exactly (which is considerable given the randomness in simulation), the overall trend of the four chains are similar. 
+
+Hence, utilizing the trace plot and density plot above, it can be assumed that the MCMC simulation for the model has adequate iterations, the markov chains are *good* and the model can be used an accurate way to approximate the posterior.  
 
 ## Interpreting the posterior (Sakaiza)
 
@@ -159,14 +164,13 @@ The posterior summary statistics provide us with the credible interval of each p
 gpa_model_summary <- summary(gpa_model_sim)
 head(as.data.frame(gpa_model_summary),-2)
 
-
 ```
 
 
 **For Intercept**: There is a 80% posterior probability that a student that has a GPA and a SAT score of 0 exercise between 11.04 and 19.5 hours per week. 
 
 
-**For SAT:** There is a 80% posterior probability that for each point increase in SAT, there is a change between -0.003 and 0	in hours of exercise per week for a student.
+**For SAT:** There is a 80% posterior probability that for each point increase in SAT, there is a drecrease of between 0.003 and 0	in hours of exercise per week for a student.
 
 
 **For GPA:** There is a 80% posterior probability that for each point increase in GPA, there is a decrease between 1.27 and 3.30 hours in the amount of exercising a student practices per week .
@@ -195,9 +199,9 @@ mcmc_areas(gpa_model_sim,
 ```
 
 
-## Hypothesis testing (Chhiring)
+## Hypothesis testing 
 
-Since the regression model we built provided us with 40000 alternative scenario for the trend in the relationship between Exercise, SAT and GPA.We can then compute the posterior probability that $\beta_1$ and $\beta_2$ are actually negative. 
+Since the regression model we built provided us with 40000 alternative scenario for the trend in the relationship between Exercise, SAT and GPA, we can then compute the posterior probability that $\beta_1$ and $\beta_2$ are actually negative. 
 
 **Data frame creation**
 
