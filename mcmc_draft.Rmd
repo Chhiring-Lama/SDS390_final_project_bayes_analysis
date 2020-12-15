@@ -22,7 +22,7 @@ library( janitor )
 
 ## 1. Background
 
-When students focus on academics so much they tend to forget about their physical well being and exercise less. This analysis is an attempt to unveil the relationship between the exercising habit of students and their academic performance. Using a dataset of 343 observations from the `Lock5Data` Package, we will rely on bayesian methods, highlighting the importance of balancing prior information with data in order to infer a posterior interpretation,to explain the relationship between these two factors.   
+Students focus on academics might affect their physical well being which can be measured through their exercising habit. This analysis is an attempt to unveil the relationship between the exercising habit of students and their academic performance. Using a dataset of 343 observations from the `Lock5Data` Package, we will rely on bayesian methods, highlighting the importance of balancing prior information with data in order to infer a posterior interpretation, to explain the relationship between these two factors.   
 
 
 ## 2. Data set
@@ -42,9 +42,9 @@ In this analysis, we used the following variables:
 
 Exercise (hours per week): Response variable, which is continuous
 
-SAT (point) : Explanatory variable, which is continuous
+SAT (out of 1600 points) : Explanatory variable, which is continuous
 
-GPA ( point): Explanatory variable, which is continuous
+GPA (out of 4 points): Explanatory variable, which is continuous
 
 
 **Defining the likelihood model and parameters**
@@ -56,7 +56,7 @@ Assuming that there is a linear association for exercise with SAT and GPA, the e
 
 where:
 
-\textbf {$\beta_0$} : The amount of exercise in hour when GPA and SAT score are both 0
+\textbf {$\beta_0$} : The amount of exercise in hour when GPA and SAT scores are both 0
 
 
 \textbf {$\beta_1$} : The change in hours of exercise for every point increase in the student's SAT, when GPA is kept constant.
@@ -65,20 +65,20 @@ where:
 \textbf {$\beta_2$} : The change in hours of of exercise for every point increase in the student's GPA, when SAT is kept constant
 
 
-\textbf {$\epsilon_i$} : is a measure of the variability of Y for students with similar GPA and SAT scores. 
+\textbf {$\epsilon_i$} : The measure of the variability in exercising hours per week for students with similar GPA and SAT scores. 
 
 
 **Hypothesis**
 
 We hypothesized that there is a negative association between hours of exercise and GPA, SAT. 
 
-As SAT increases, the number of hours a student exercises decreases. Mathematically:
+As SAT increases, the number of hours a student exercises per week decreases. Mathematically:
 
 \textbf {$H_0$} : $\beta_1$ = 0
 
 \textbf {$H_a$} : $\beta_1$ < 0 
 
-As GPA score increases, the number of hours a student exercise decreases. Mathematically:
+As GPA score increases, the number of hours a student exercises per weak decreases. Mathematically:
 
 \textbf {$H_0$} : $\beta_2$ = 0 
 
@@ -86,7 +86,7 @@ As GPA score increases, the number of hours a student exercise decreases. Mathem
 
 **Prior models**
 
-Vague prior from the rstan model was used, therefore there was none specified. 
+Vague prior from the rstan model was used, therefore there was none manually specified. 
 
 **Visualization**
 
@@ -104,7 +104,7 @@ As shown in the figure above, in general, both GPA and SAT have negative linear 
 
 **Defining the Regression Model**
 
-To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score and GPA score as the predictors and `Exercise` as the dependent variable. 
+To identify the association between the number of hours exercised and academic performance (GPA and SAT score), a multiple linear regression was run with `SAT` score and `GPA` score as the predictors and `Exercise` as the dependent variable. 
 
 A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this model, it is assumed that a normal-normal model can be used because one can assume that the distribution of exercise as well as that for GPA and SAT scores are bell-shaped. The model contains an MCMC simulation with 4 Markov chains with 10000 iterations for each chain. 
 
@@ -146,7 +146,7 @@ df <- as.data.frame(gpa_model_summary) %>%
 head(df, -2)
 ```
 
-Since Rhat for each coefficient is more or less equal to 1, there is stability across the parallel chains. Similarly, n_eff(effective sample size) is large enough and close to N (actual sample size). This shows that our posterior approximation is quite accurate. 
+Since Rhat for each coefficient is more or less equal to 1, there is stability across the parallel chains. Besides, n_eff(effective sample size) is large enough and close to N (actual sample size). This shows that our posterior approximation is quite accurate. 
 
 Hence, utilizing the trace plot, density plot and the summary statistics above, it can be assumed that the MCMC simulation for the model has adequate iterations, the Markov Chains are *good* and the model can be used as an accurate way to approximate the posterior.  
 
@@ -163,7 +163,7 @@ head(as.data.frame(gpa_model_summary),-2)
 **For Intercept**: There is a 80% posterior probability that a student that has a GPA and a SAT score of 0 exercise between 11.04 and 19.5 hours per week. 
 
 
-**For SAT:** There is a 80% posterior probability that for each point increase in SAT, there is a drecrease of between 0.003 and 0	in hours of exercise per week for a student.
+**For SAT:** There is a 80% posterior probability that for each point increase in SAT, there is a decrease of between 0.003 and 0	in hours of exercise per week for a student.
 
 
 **For GPA:** There is a 80% posterior probability that for each point increase in GPA, there is a decrease between 1.27 and 3.30 hours in the amount of exercising a student practices per week .
@@ -200,7 +200,7 @@ mcmc_areas(gpa_model_sim,
 
 ### 3.d) Hypothesis testing 
 
-Since the regression model we built provided us with 40000 alternative scenario for the trend in the relationship between Exercise, SAT and GPA, we can then compute the posterior probability that $\beta_1$ and $\beta_2$ are actually negative. 
+Since the regression model we built provided us with 40000 alternative scenario for the trend in the relationship between Exercise, SAT and GPA, we can then compute the posterior probability to check if $\beta_1$ and $\beta_2$ are actually negative. 
 
 **Data frame creation**
 
@@ -247,7 +247,7 @@ Because there is 80% chance that $\beta_2$,the GPA coefficient is between  -3.30
 
 ## 4. Conclusion
 
-From the analysis above we can conclude that there is not enough posterior evidence that there is a negative association or even just an association between Exercising hours of students and their SAT score. However, there is ample evidence that there is a negative association between GPA and exercising hours. Using bayesian methods we went from our prior understanding of the relationship between these variables, to a posterior analysis from 40 000 simulated scenarios, which also account for uncertainties in our posterior. This was made possible by using the data from a dataset of 343 observations. Through this analysis, we can see the power of rtsan in simulating massive information from a small dataset.  
+From the analysis above we can conclude that there is not enough posterior evidence that there is a negative association or even just an association between Exercising hours of students and their SAT scores. However, there is ample evidence that there is a negative association between GPA and exercising hours. Using bayesian methods we went from our prior understanding of the relationship between these variables, to a posterior analysis using 40 000 simulated scenarios, which also account for uncertainties in our posterior. This was made possible by using the data from a dataset of 343 observations. Through this analysis, not only can we see that the bayesian method is a good way to interpret data within human context, but we can also see the power of rtsan in simulating massive information from a small dataset.  
 
 ## 5. References:
 
