@@ -1,5 +1,5 @@
 ---
-title: "Explaining the association between exercising and academic performance"
+title: "Explaining the Association Between Exercising and Academic Performance"
 author: "Chhiring Lama, Sakaiza Rasolofomanana Rajery"
 date: "12/11/2020"
 output: pdf_document
@@ -22,7 +22,7 @@ library( janitor )
 
 ## 1. Background
 
-When students focus on academics so much they tend to forget about their physical well being and exercise less. This analysis is an attempt to unveil the relationship between the exercising habit of students and their academic performance Using a data set of 343 observations from the Lock5Data Package, we will rely on bayesian methods, highlighting the importance of balancing prior information with data in order to infer a posterior interpretation,to explain the relationship between these two factors.   
+When students focus on academics so much they tend to forget about their physical well being and exercise less. This analysis is an attempt to unveil the relationship between the exercising habit of students and their academic performance. Using a dataset of 343 observations from the `Lock5Data` Package, we will rely on bayesian methods, highlighting the importance of balancing prior information with data in order to infer a posterior interpretation,to explain the relationship between these two factors.   
 
 
 ## 2. Data set
@@ -40,7 +40,7 @@ data(GPAGender)
 
 In this analysis, we used the following variables:
 
-Exercise (hours): Response variable, which is continuous
+Exercise (hours per week): Response variable, which is continuous
 
 SAT (point) : Explanatory variable, which is continuous
 
@@ -49,8 +49,7 @@ GPA ( point): Explanatory variable, which is continuous
 
 **Defining the likelihood model and parameters**
 
-Assuming that there is a linear association between exercise and SAT and GPA. The expected amount of exercise (Y) in hour for a student _i_ as a function of GPA (X) and SAT(Z) for that student can be written as:
-
+Assuming that there is a linear association for exercise with SAT and GPA, the expected amount of exercise (Y) in hours per week for a student _i_ as a function of GPA (X) and SAT(Z) for that student can be written as:
 
 
 \centerline {$Y_i = \beta_0 + \beta_1 * X_i + \beta_2 * Z_i + \epsilon_i ~ N(0, \sigma)$}
@@ -60,11 +59,10 @@ where:
 \textbf {$\beta_0$} : The amount of exercise in hour when GPA and SAT score are both 0
 
 
-\textbf {$\beta_1$} : The increase in hours of exercise for every point increase in the student's SAT, when GPA
-is kept constant.
+\textbf {$\beta_1$} : The change in hours of exercise for every point increase in the student's SAT, when GPA is kept constant.
 
 
-\textbf {$\beta_2$} : The increase in hours of of exercise for every point increase in the student's GPA, when SAT is kept constant
+\textbf {$\beta_2$} : The change in hours of of exercise for every point increase in the student's GPA, when SAT is kept constant
 
 
 \textbf {$\epsilon_i$} : is a measure of the variability of Y for students with similar GPA and SAT scores. 
@@ -106,9 +104,9 @@ As shown in the figure above, in general, both GPA and SAT have negative linear 
 
 **Defining the Regression Model**
 
-To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score, GPA score and Pulse rate as the predictors and `Exercise` as the dependent variable. 
+To identify the association between the number of hours exercised and academic progress (GPA and SAT score), a multiple linear regression was run with SAT score and GPA score as the predictors and `Exercise` as the dependent variable. 
 
-A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this, model it is assumed that a normal-normal model can be used because, one can assume that the distribution of exercise as well as GPA and SAT scores is bell-shaped. The model contains an MCMC simulation with 4 Markov chains and with 10000 iterations for each chain. 
+A bayesian linear regression model was created with **Rstan** package using the `stan_glm` function. The number of hours exercised (`Exercise`) could be predicted using `GPA` and `SAT`, assuming a normal (Gaussian) likelihood model. For this model, it is assumed that a normal-normal model can be used because one can assume that the distribution of exercise as well as that for GPA and SAT scores are bell-shaped. The model contains an MCMC simulation with 4 Markov chains with 10000 iterations for each chain. 
 
 
 ```{r, message= FALSE, results='hide'}
@@ -125,21 +123,21 @@ gpa_model_sim <- stan_glm(Exercise ~ SAT + GPA,
 
 ### 3.b) Diagnosis
 
-Once the model was created, diagnostics needed to be run to make sure that the markov chains used for the regression model was big enough (with adequate iterations) and provided more accurate approximation of the posterior. To check if the MCMC simulations meets the criteria, two plots were graphed: MCMC trace plot and density plot overlaying the four chains. 
+Once the model was created, diagnostics needed to be run to make sure that the Markov chains used for the regression model was large enough (with adequate iterations) and provided more accurate approximation of the posterior. To check if the MCMC simulations meets the criteria, two plots were graphed: MCMC trace plot and density plot overlaying the four chains. 
 
 ```{R, fig.dim = c(10,5)}
 mcmc_trace(gpa_model_sim, size = 0.1)
 
 ```
 
-The major criteria for a good MCMC simulation according to the trace plot is that the plot resembles white noise without overall trends. Looking at the plot above, the graphs for all the coefficients ($\beta_0,\ \beta_1,\ \beta_2,\ \sigma$) meet the criteria. 
+The major criteria for a good MCMC simulation according to the trace plot is that the plot resembles white noise without showing any specific overall trends. Looking at the plot above, the graphs for all the coefficients ($\beta_0,\ \beta_1,\ \beta_2,\ \sigma$) meet the criteria. 
 
 ```{r, fig.dim = c(10,5)}
 mcmc_dens_overlay(gpa_model_sim)
 
 ```
 
-The results from the density plot agree with the trace plots. For each coefficients, even though the points for the chains do not match exactly (which is considerable given the randomness in simulation), the overall trend of the four chains are similar. 
+The results from the density plot agree with the trace plots. For each coefficients, even though the points for the chains do not match exactly, which is considerable given the randomness in simulation, the overall trend of the four chains are similar. 
 
 ```{r}
 gpa_model_summary <- summary(gpa_model_sim)
@@ -150,7 +148,7 @@ head(df, -2)
 
 Since Rhat for each coefficient is more or less equal to 1, there is stability across the parallel chains. Similarly, n_eff(effective sample size) is large enough and close to N (actual sample size). This shows that our posterior approximation is quite accurate. 
 
-Hence, utilizing the trace plot, density plot and the summary statistics above, it can be assumed that the MCMC simulation for the model has adequate iterations, the Markov Chains are *good* and the model can be used an accurate way to approximate the posterior.  
+Hence, utilizing the trace plot, density plot and the summary statistics above, it can be assumed that the MCMC simulation for the model has adequate iterations, the Markov Chains are *good* and the model can be used as an accurate way to approximate the posterior.  
 
 ### 3.c) Interpreting the posterior 
 
@@ -176,7 +174,7 @@ These intervals are visualized by the shaded regions below:
 
 
 
-```{R, fig.align = "center",fig.width = 5, fig.height = 3}
+```{R, fig.align = "center",fig.width = 5, fig.height = 2.5}
 mcmc_areas(gpa_model_sim,
            pars = c("(Intercept)"),
            prob = 0.80,
@@ -184,7 +182,7 @@ mcmc_areas(gpa_model_sim,
 ```
 
 
-```{R, fig.align = "center",fig.width = 5, fig.height = 3}
+```{R, fig.align = "center",fig.width = 5, fig.height = 2.5}
 mcmc_areas(gpa_model_sim,
            pars = c("SAT"),
            prob = 0.80,
@@ -192,7 +190,7 @@ mcmc_areas(gpa_model_sim,
 ```
 
 
-```{R, fig.align = "center", fig.width = 5, fig.height = 3}
+```{R, fig.align = "center", fig.width = 5, fig.height = 2.5}
 
 mcmc_areas(gpa_model_sim,
            pars = c("GPA"),
@@ -239,13 +237,13 @@ gpa_model_df %>%
 ```
 
 
-Among 40 000 simulations, 99% display a negative correlation between GPA and exercising when controlling for the other variable. The posterior odds is 990 which is much greater than . 
+Among 40 000 simulations, 99% display a negative correlation between GPA and exercising when controlling for the other variable. The posterior odds is 990 which is much greater than 1. 
 
 
-Because there is an 80% chance that $\beta_1$,the SAT coefficient, is between -0.003 and 0 and the posterior odds of there being a negative correlation between SAT and number of hours of exercise is less than 1, we fail to reject the null hypothesis that $\beta_1$ is equal to zero. 
+Because there is 80% chance that $\beta_1$,the SAT coefficient, is between -0.003 and 0 and the posterior odds of there being a negative correlation between SAT and number of hours of exercise is less than 1, we fail to reject the null hypothesis that $\beta_1$ is equal to zero. 
 
 
-Because there is an 80% chance that $\beta_2$,the GPA coefficient is between  -3.30 and  -1.27 and the posterior odds of there being a negative correlation between GPA and number of hours of exercise is much greater than 1, we reject the null hypothesis that $\beta_2$ is equal to zero. 
+Because there is 80% chance that $\beta_2$,the GPA coefficient is between  -3.30 and  -1.27 and the posterior odds of there being a negative correlation between GPA and number of hours of exercise is much greater than 1, we reject the null hypothesis that $\beta_2$ is equal to zero. 
 
 ## 4. Conclusion
 
